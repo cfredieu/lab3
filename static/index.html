@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+@author: Celine Fredieu
+Seattle University, ARIN 5360
+@see: https://catalog.seattleu.edu/preview_course_nopop.php?catoid=55&coid=190380
+@version: 0.1.0+w26
+-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retrieval</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <h1>FIXME: H1 Page Title</h1>
+    <p style="text-align: center; color: #666;">
+        FIXME: Page description goes here.
+    </p>
+
+    <!-- Health section -->
+    <div class="health-section">
+        <!-- Display server health status -->
+        <button id="healthButton" onclick="displayHealth()">How am I feeling?</button>
+        <div id="health-status">Not sure right now</div>
+    </div>
+</div>
+
+<script>
+    // Get health status from the server and show it in the health-status div
+    async function displayHealth() {
+        try {
+            const result = document.getElementById('health-status');
+            result.innerHTML = `<p>Hmm...let me see</p>`;
+            const response = await fetch('http://localhost:8000/health');
+            const data = await response.json();
+            result.innerHTML = `<p>${data.status}</p><p>${data.message}</p>`;
+        } catch (error) {
+            document.getElementById('health-status').textContent = 'Error fetching health status';
+        }
+    }
+</script>
+</body>
+</html>

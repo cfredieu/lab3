@@ -1,10 +1,12 @@
 # tests/conftest.py
+import os
+
 import pytest
 from fastapi.testclient import TestClient
+
 import src.retrieval.main
-from src.retrieval.main import app, MODEL_PATH
+from src.retrieval.main import MODEL_PATH, app
 from src.retrieval.model import ModelService
-import os
 
 
 @pytest.fixture(scope="session", autouse=True)

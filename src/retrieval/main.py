@@ -11,22 +11,20 @@ STUDENTS:
 """
 
 import logging
-from contextlib import asynccontextmanager
-from typing import Optional, List
-
-import uvicorn
 import os
+from contextlib import asynccontextmanager
+from typing import List, Optional
 
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import HTMLResponse, JSONResponse
-from fastapi.staticfiles import StaticFiles
 
 from .model import ModelService
 
 # Our trained CNN model from the PyTorch tutorial
-MODEL_PATH = './gg_classifier.pt'
+MODEL_PATH = "./gg_classifier.pt"
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -39,6 +37,7 @@ model_service: Optional[ModelService] = None
 # Define response models with Pydantic
 class PredictionResponse(BaseModel):
     """Response model for predictions."""
+
     predicted_class: str
     confidence: float
     top_5_predictions: List[dict]
@@ -46,6 +45,7 @@ class PredictionResponse(BaseModel):
 
 class HealthResponse(BaseModel):
     """Response model for health check."""
+
     status: str
     model_loaded: bool
     message: str
@@ -80,18 +80,22 @@ async def lifespan(_app: FastAPI):
 
 
 # Initialize FastAPI app
-app = FastAPI(title="CNN Image Classifier API",
-              description="Upload an image and get classification predictions",
-              version="0.1.0",
-              lifespan=lifespan)
+app = FastAPI(
+    title="CNN Image Classifier API",
+    description="Upload an image and get classification predictions",
+    version="0.1.0",
+    lifespan=lifespan,
+)
 
 # Add cross-origin resource sharing (CORS) middleware
 # (gives browser permission to call our API)
-app.add_middleware(CORSMiddleware,
-                   allow_origins=["*"], # In production, specify actual origins
-                   allow_credentials=True,
-                   allow_methods=["*"],
-                   allow_headers=["*"], )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, specify actual origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # Implement health check endpoint
@@ -105,14 +109,16 @@ async def health_check():
     """
     # Check if the model is loaded
     if model_service is None:
-        return HealthResponse(status="unhealthy", model_loaded=False,
-                              message="Model not loaded")
-    return HealthResponse(status="healthy", model_loaded=True,
-                          message="API is running and model is ready")
+        return HealthResponse(status="unhealthy", model_loaded=False, message="Model not loaded")
+    return HealthResponse(
+        status="healthy", model_loaded=True, message="API is running and model is ready"
+    )
 
 
 # Implement home page endpoint
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
 @app.get("/", response_class=HTMLResponse)
 async def home():
     """
@@ -128,7 +134,6 @@ async def home():
             return f.read()
     except FileNotFoundError:
         return "<h1>500 Error</h1><p>index.html not found in static/</p>"
-
 
 
 # Implement prediction endpoint
@@ -148,8 +153,7 @@ async def predict(file: UploadFile = File(...)):
     """
     # Check if the model is loaded
     if model_service is None:
-        raise HTTPException(status_code=503,
-                            detail="Model not loaded. Check server logs.")
+        raise HTTPException(status_code=503, detail="Model not loaded. Check server logs.")
 
     # Validate their file type
     if not file.content_type.startswith("image/"):
@@ -164,19 +168,17 @@ async def predict(file: UploadFile = File(...)):
         predicted_class, confidence, top5 = model_service.predict(image_bytes)
 
         # Format response (turn it into something that makes sense)
-        top5_formatted = [{"class": class_name, "probability": prob} for
-                          class_name, prob in top5]
+        top5_formatted = [{"class": class_name, "probability": prob} for class_name, prob in top5]
 
         logger.info(f"Prediction: {predicted_class} ({confidence:.2%})")
 
-        return PredictionResponse(predicted_class=predicted_class,
-                                  confidence=confidence,
-                                  top_5_predictions=top5_formatted)
+        return PredictionResponse(
+            predicted_class=predicted_class, confidence=confidence, top_5_predictions=top5_formatted
+        )
 
     except Exception as e:
         logger.error(f"Prediction failed: {str(e)}")
-        raise HTTPException(status_code=500,
-                            detail=f"Prediction failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Prediction failed: {str(e)}")
 
 
 # Add error handler for general exceptions
@@ -184,12 +186,13 @@ async def predict(file: UploadFile = File(...)):
 async def general_exception_handler(_request, exc):
     """Handle unexpected exceptions."""
     logger.error(f"Unexpected error: {str(exc)}")
-    return JSONResponse(status_code=500,
-                        content={"detail": "Internal server error"})
+    return JSONResponse(status_code=500, content={"detail": "Internal server error"})
+
 
 @app.get("/test/error")
 async def force_error():
     raise RuntimeError("This is a deliberate test error")
+
 
 if __name__ == "__main__":
     print("To run this application:")

@@ -39,6 +39,6 @@ def test_generic_exception_handler(client):
     """Use the purpose-build /test/error to raise"""
     res = client.get("/test/error")
     assert res.status_code == 500
-    assert 'detail' in res.json()
+    assert "detail" in res.json()
     data = res.json()
     assert "Internal server error" in data["detail"]

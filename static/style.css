@@ -1,92 +1,121 @@
-/* Default Styles for Student Projects, v3 */
-
-/* Box sizing reset for easier sizing calculations */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* Root variables for easy theming */
-:root {
-  --primary-color: #2563eb;
-  --secondary-color: #10b981;
-  --text-color: #1f2937;
-  --background-color: #f9fafb;
-  --border-color: #e5e7eb;
-  --max-width: 800px;
-}
-
-/* Body defaults */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-  line-height: 1.6;
-  color: var(--text-color);
-  background-color: var(--background-color);
-  padding: 2rem 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #EEE4F2;
 }
 
-/* Container for centering content */
 .container {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 3rem;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  text-align: center;
+    background-color: #E6D8ED;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Headings */
 h1 {
-  color: var(--primary-color);
-  margin-bottom: 1rem;
-  font-size: 2.5rem;
+    font-size: 40px;
+    color: #333;
+    text-align: center;
 }
 
-/* Health status display */
-#health-status {
-  margin-top: 1.5rem;
-  padding: 1.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-radius: 8px;
-  font-size: 1.25rem;
-  font-weight: 600;
-  min-height: 60px;
-  align-items: center;
-  justify-content: center;
+.upload-section {
+    margin: 30px 0;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: left;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
 }
 
-/* Buttons */
-button {
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  margin-top: 1rem;
+#imageInput {
+    margin: 10px 0;
+    text-align: center;
 }
 
-button:hover {
-  background-color: #1d4ed8;
+#uploadButton {
+    background-color: #8333EB;
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
 }
 
-/* Responsive images */
-img {
-  max-width: 100%;
-  height: auto;
+#uploadButton:hover {
+    background-color: #B934EA;
 }
 
-/* Links */
-a {
-  color: var(--primary-color);
-  text-decoration: none;
+#uploadButton:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
 }
 
-a:hover {
-  text-decoration: underline;
+#imagePreview {
+    margin: 20px 0;
+    text-align: center;
+}
+
+#imagePreview img {
+    max-width: 400px;
+    max-height: 400px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#results {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #D4C1DE;
+    border-radius: 5px;
+    display: none;
+}
+
+.prediction {
+    font-size: 24px;
+    color: #8333EB;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.prediction:hover {
+    color: #B934EA;
+}
+
+.confidence {
+    font-size: 20px;
+    color: #666;
+}
+
+.confidence:hover {
+    font-size: 28px;
+    color: black
+}
+
+.top5 {
+    margin-top: 20px;
+}
+
+.top5-item {
+    padding: 8px;
+    margin: 5px 0;
+    background-color: white;
+    border-radius: 3px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.loading {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+}
+
+.error {
+    color: #d32f2f;
+    padding: 10px;
+    background-color: #ffebee;
+    border-radius: 5px;
+    margin-top: 10px;
 }

@@ -10,35 +10,122 @@ Seattle University, ARIN 5360
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Retrieval</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
 <div class="container">
-    <h1>FIXME: H1 Page Title</h1>
+    <h1>🖼️ CNN Image Classifier</h1>
     <p style="text-align: center; color: #666;">
-        FIXME: Page description goes here.
+        Upload an image of your choice to classify it using our trained CNN model!
     </p>
 
-    <!-- Health section -->
-    <div class="health-section">
-        <!-- Display server health status -->
-        <button id="healthButton" onclick="displayHealth()">How am I feeling?</button>
-        <div id="health-status">Not sure right now</div>
+    <div class="upload-section">
+        <!-- Create file input for image selection -->
+        <input type="file" id="imageInput" accept="image/*">
+        <br>
+        <button id="uploadButton" onclick="uploadImage()">Classify Image</button>
     </div>
+
+    <!-- add an image preview area -->
+    <div id="imagePreview"></div>
+
+    <!-- result display area -->
+    <div id="results"></div>
 </div>
 
 <script>
-    // Get health status from the server and show it in the health-status div
-    async function displayHealth() {
+    // FIXME: Preview image when selected
+     document.getElementById('imageInput').addEventListener('change', function (event) {
+         const file = event.target.files[0];
+         if (file) {
+             // Display image preview
+             const reader = new FileReader();
+             reader.onload = function (e) {
+                 const preview = document.getElementById('imagePreview');
+                 preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+             };
+             reader.readAsDataURL(file);
+         }
+     });
+
+    // FIXME: upload and classify image
+    async function uploadImage() {
+        // Get the selected file
+        const fileInput = document.getElementById('imageInput');
+        const file = fileInput.files[0];
+
+        // FIXME: Validate that a file is selected
+         if (!file) {
+             alert('Please select an image first');
+             return;
+         }
+
+        // FIXME: Show loading state
+         const resultsDiv = document.getElementById('results');
+         resultsDiv.style.display = 'block';
+         resultsDiv.innerHTML = '<p class="loading">🔄 Classifying image...</p>';
+
+        // FIXME: Create FormData and append the file
+         const formData = new FormData();
+         formData.append('file', file);
+
         try {
-            const result = document.getElementById('health-status');
-            result.innerHTML = `<p>Hmm...let me see</p>`;
-            const response = await fetch('http://localhost:8000/health');
-            const data = await response.json();
-            result.innerHTML = `<p>${data.status}</p><p>${data.message}</p>`;
+            // FIXME: Send POST request to /predict endpoint
+             const response = await fetch('http://localhost:8000/predict', {
+                 method: 'POST',
+                 body: formData
+             });
+
+            // FIXME: Check if the request was successful
+             if (!response.ok) {
+                 throw new Error('Prediction failed');
+             }
+
+            // FIXME: Parse JSON response and display results
+             const data = await response.json();
+             displayResults(data);
+
         } catch (error) {
-            document.getElementById('health-status').textContent = 'Error fetching health status';
+            // Handle errors
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                    <div class="error">
+                        ❌ Error: ${error.message}
+                        <br>Make sure the server is running on http://localhost:8000
+                    </div>
+                `;
+            console.error('Error:', error);
         }
+    }
+
+    // Display prediction results
+    function displayResults(data) {
+        // Format and display the prediction
+        // Create HTML to show:
+        // 1. Predicted class
+        // 2. Confidence percentage
+        // 3. Top 5 predictions with probabilities
+
+        // FIXME: Display results in the results div
+         const resultsDiv = document.getElementById('results');
+         resultsDiv.innerHTML = `
+                 <h2>Results</h2>
+                 <div class="prediction">
+                     Prediction: ${data.predicted_class}
+                 </div>
+                 <div class="confidence">
+                     Confidence: ${(data.confidence * 100).toFixed(2)}%
+                 </div>
+                 <div class="top5">
+                     <h3>Top 5 Predictions:</h3>
+                     ${data.top_5_predictions.map((pred, idx) => `
+                         <div class="top5-item">
+                             <span>${idx + 1}. ${pred.class}</span>
+                             <span>${(pred.probability * 100).toFixed(2)}%</span>
+                         </div>
+                     `).join('')}
+                 </div>
+             `;
     }
 </script>
 </body>
